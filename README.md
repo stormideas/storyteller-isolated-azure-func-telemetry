@@ -1,3 +1,5 @@
+> **Note**: The root namespace was updated to use Storyteller instead of Element. The SDK was also downgraded to use .NET 5.0 instead of .NET 6.0. The original package is still available on Nuget.org, but it is recommended to use the Storyteller package instead.
+
 # HTTP success/failure logging for Isolated Azure Functions
 Provides standard HTTP request logging handling for Azure Functions running in Isolated mode so that 4xx and 5xx responses are logged as Failures in AppInsights.
 
@@ -22,7 +24,7 @@ In ASP.NET Core and other web app technologies, HTTP response codes like this ar
 
 In the in-process model, the solution was to register an `ITelemetryInitializer` with the `IServiceCollection` and then you could watch for `RequestTelemetry` and modify the `Success` property based on the response code.
 
-However, in the the isolated functions model, the functions host and your functions code run as two separate processes. The functions host recieves the incoming request then communicates with your worker process via gRPC. Although some telemetry data can be handled in the worker, only the host handles the `RequestTelemetry`. So even if you register an `ITelemetryInitializer` in your worker, you will never receive any `RequestTelemetry` events. The only way to get access to the `RequestTelemetry` is to do it from the host.
+However, in the isolated functions model, the functions host and your functions code run as two separate processes. The functions host recieves the incoming request then communicates with your worker process via gRPC. Although some telemetry data can be handled in the worker, only the host handles the `RequestTelemetry`. So even if you register an `ITelemetryInitializer` in your worker, you will never receive any `RequestTelemetry` events. The only way to get access to the `RequestTelemetry` is to do it from the host.
 
 Unfortunately, the code you write in your function app only runs in the worker process and there is no way to 'reach into' the host to modify its behavior.
 
@@ -33,9 +35,9 @@ Binding extensions are ways to add your own custom trigger types, input bindings
 One limitation of extensions is that they are only geared towards bindings. As such, your function app code must make use of at least one binding from your extension or else the function extension metadata generator will strip out the extension information from the generated host code. That is why the `[HttpTelemetry]` input binding attribute needs to be applied _somewhere_ in a function in your function app - it doesnt do anything, other than prevent the rest of the extension code from being complied out.
 
 The actual mechanisms of how extensions work is:
-- you add a reference to a worker extension library (in this case: `Element.Azure.Functions.Worker.Extensions.HttpTelemetry` available via [Nuget](https://www.nuget.org/packages/Element.Azure.Functions.Worker.Extensions.HttpTelemetry))
+- you add a reference to a worker extension library (in this case: `Storyteller.Azure.Functions.Worker.Extensions.HttpTelemetry` available via [Nuget](https://www.nuget.org/packages/Element.Azure.Functions.Worker.Extensions.HttpTelemetry))
 - that worker extension library has an `[ExtensionInformation]` attribute that points to *a different* Nuget package that contains the actual logic which will be injected into the host (in this case: `Element.Azure.WebJobs.Extensions.HttpTelemetry`, which is also available on [Nuget](https://www.nuget.org/packages/Element.Azure.WebJobs.Extensions.HttpTelemetry) but should not be referenced directly from your function app)
-- when you compile your function app, the function metadata generator scans your code for binding extensions, creates a temporary `.csproj` file, and outputs the necessary .dlls and and emits an `extensions.json` file with metadata about your extension and the entry points
+- when you compile your function app, the function metadata generator scans your code for binding extensions, creates a temporary `.csproj` file, and outputs the necessary .dlls and emits an `extensions.json` file with metadata about your extension and the entry points
 
 You don't _need_ to know any of that in order to take advantage of this package, but it might be interesting to know what is going on under the hood.
 
