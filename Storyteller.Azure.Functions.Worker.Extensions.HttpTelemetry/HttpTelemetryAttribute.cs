@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Azure.Functions.Worker.Extensions.Abstractions;
 
-[assembly: ExtensionInformation("Storyteller.Azure.WebJobs.Extensions.HttpTelemetry", "1.0.0")]
+[assembly: ExtensionInformation("Storyteller.Azure.WebJobs.Extensions.HttpTelemetry", "1.1.0")]
 
 namespace Storyteller.Azure.Functions.Worker.Extensions.HttpTelemetry
 {

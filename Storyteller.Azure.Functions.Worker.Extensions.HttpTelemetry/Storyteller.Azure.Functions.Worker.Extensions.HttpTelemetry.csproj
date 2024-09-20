@@ -5,7 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.1.0</VersionPrefix>
     <Title>Storyteller.Azure.Functions.Worker.Extensions.HttpTelemetry</Title>
     <Authors>Brian Dunnington</Authors>
     <Description>Azure Functions Isolated worker extension to enable compatiblity with Element.Azure.WebJobs.Extensions.HttpTelemetry.
